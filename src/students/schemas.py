@@ -11,3 +11,12 @@ class StudentCreate(BaseModel):
     email: EmailStr | None = None
     phone: str | None = None
     address: str | None = None
+
+class StudentUpdate(BaseModel):
+    first_name: str | None = None
+    last_name: str | None = None
+    date_of_birth: date | None = None
+    gender: str | None = None
+    email: EmailStr | None = None
+    phone: str | None = None
+    address: str | None = None
