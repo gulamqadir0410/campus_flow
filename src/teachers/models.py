@@ -7,7 +7,13 @@ from sqlalchemy import Date, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.utils.db import Base
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from src.academics.models import (
+        ClassTeacherAssignment,
+        TeachingAssignment,
+    )
 
 class Teacher(Base):
     __tablename__ = "teachers"

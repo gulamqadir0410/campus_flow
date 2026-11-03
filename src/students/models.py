@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 from sqlalchemy import func
-
+from typing import TYPE_CHECKING
 from datetime import date, datetime
 
 from sqlalchemy import (
@@ -17,6 +17,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.utils.db import Base
 
+if TYPE_CHECKING:
+    from src.academics.models import SchoolClass
 
 class Student(Base):
     __tablename__ = "students"
