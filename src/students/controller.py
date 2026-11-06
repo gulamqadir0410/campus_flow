@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
-from src.students.schemas import StudentCreate, StudentUpdate
+from src.students.schemas import StudentCreate, StudentUpdate, StudentStatusUpdate
 from src.students.models import Student
 
 
@@ -111,3 +111,25 @@ def update_student(admission_num:str, body:StudentUpdate, db:Session):
     db.refresh(one_student)
 
     return one_student
+
+
+def student_status_set(student_id:int, body:StudentStatusUpdate, db:Session):
+    one_student = db.get(Student,student_id)
+
+    if not one_student:
+        raise HTTPException(404, detail=f"Student With Student ID: {student_id} Not Found.")
+
+    one_student.status = body.status
+
+    db.commit()
+    db.refresh(one_student)
+
+    return {
+        "message": "Student status updated successfully",
+        "student": one_student
+    }
+
+
+
+
+

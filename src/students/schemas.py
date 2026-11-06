@@ -20,3 +20,6 @@ class StudentUpdate(BaseModel):
     email: EmailStr | None = None
     phone: str | None = None
     address: str | None = None
+
+class StudentStatusUpdate(BaseModel):
+    status: str
