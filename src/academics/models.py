@@ -54,7 +54,6 @@ class AcademicSession(Base):
         back_populates="academic_session"
     )
 
-
 class ClassLevel(Base):
     __tablename__ = "class_levels"
 
@@ -75,7 +74,6 @@ class ClassLevel(Base):
     classes: Mapped[list["SchoolClass"]] = relationship(
         back_populates="class_level"
     )
-
 
 class SchoolClass(Base):
     __tablename__ = "school_classes"
@@ -123,7 +121,6 @@ class SchoolClass(Base):
         list["TeachingAssignment"]
     ] = relationship(back_populates="school_class")
 
-
 class Subject(Base):
     __tablename__ = "subjects"
 
@@ -144,7 +141,6 @@ class Subject(Base):
     teaching_assignments: Mapped[
         list["TeachingAssignment"]
     ] = relationship(back_populates="subject")
-
 
 class ClassTeacherAssignment(Base):
     __tablename__ = "class_teacher_assignments"
@@ -184,7 +180,6 @@ class ClassTeacherAssignment(Base):
     teacher: Mapped["Teacher"] = relationship(
         back_populates="class_teacher_assignments"
     )
-
 
 class TeachingAssignment(Base):
     __tablename__ = "teaching_assignments"

@@ -112,7 +112,6 @@ def update_student(admission_num:str, body:StudentUpdate, db:Session):
 
     return one_student
 
-
 def student_status_set(student_id:int, body:StudentStatusUpdate, db:Session):
     one_student = db.get(Student,student_id)
 
