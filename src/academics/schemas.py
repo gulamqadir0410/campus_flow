@@ -2,6 +2,7 @@ from datetime import date
 
 from pydantic import BaseModel, Field, ConfigDict
 
+
 class AcademicSessionCreate(BaseModel):
     name: str = Field(min_length=1, max_length=30)
     start_date: date
@@ -69,5 +70,28 @@ class SchoolClassResponse(BaseModel):
     class_level_id: int
     section_name: str
     capacity: int | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+#Subject Schemas
+
+class SubjectCreate(BaseModel):
+    name:str
+    code:str
+    description: str| None = None
+    is_active: bool = True
+
+class SubjectUpdate(BaseModel):
+    name: str | None = None
+    code: str | None = None
+    description: str | None = None
+    is_active: bool | None = None
+
+class SubjectResponse(BaseModel):
+    id: int
+    name: str
+    code: str
+    description: str | None
+    is_active: bool
 
     model_config = ConfigDict(from_attributes=True)

@@ -1,6 +1,7 @@
 
-from src.academics.models import AcademicSession, SchoolClass, ClassLevel, ClassTeacherAssignment, TeachingAssignment
-from src.academics.schemas import AcademicSessionCreate, AcademicSessionUpdate, ClassLevelCreate, ClassLevelUpdate, SchoolClassCreate, SchoolClassUpdate
+from src.academics.models import AcademicSession, SchoolClass, ClassLevel, ClassTeacherAssignment, TeachingAssignment,Subject
+from src.academics.schemas import AcademicSessionCreate, AcademicSessionUpdate, ClassLevelCreate, ClassLevelUpdate, \
+    SchoolClassCreate, SchoolClassUpdate, SubjectCreate, SubjectUpdate
 from src.students.models import StudentEnrollment
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
@@ -421,6 +422,115 @@ def delete_school_class(school_class_id:int, db:Session):
         )
 
     db.delete(existing_school_class)
+    db.commit()
+
+    return None
+
+
+# Subject Controllers
+
+def create_subject(body:SubjectCreate, db:Session):
+
+    existing_subject = db.query(Subject).filter(
+        Subject.name == body.name
+    ).first()
+
+    if existing_subject:
+        raise HTTPException(409, detail="Subject already exists")
+
+    existing_code = db.query(Subject).filter(
+        Subject.code == body.code
+    ).first()
+
+    if existing_code:
+        raise HTTPException(409, detail="Subject code exists")
+
+    new_subject = Subject(**body.model_dump())
+
+    db.add(new_subject)
+    db.commit()
+    db.refresh(new_subject)
+
+    return new_subject
+
+def get_all_subjects(db:Session):
+
+    all_subjects = db.query(Subject).all()
+
+    return all_subjects
+
+def get_subject_by_id(subject_id:int, db:Session):
+
+    existing_subject = db.query(Subject).filter(
+        Subject.id == subject_id
+    ).first()
+
+    if not existing_subject:
+        raise HTTPException(404, detail=f"Subject with id {subject_id} not found")
+
+    return existing_subject
+
+def update_subject_by_id(body:SubjectUpdate,subject_id:int, db:Session):
+
+    existing_subject = db.query(Subject).filter(
+        Subject.id == subject_id
+    ).first()
+
+    if not existing_subject:
+        raise HTTPException(404, detail=f"Subject with id {subject_id} not found")
+
+    updated_subject_data = body.model_dump(exclude_unset=True)
+
+    for field in ["name","code","is_active"]:
+        if field in updated_subject_data and updated_subject_data[field] is None:
+            raise HTTPException(422, detail="Update fields cannot be null.")
+
+    # 4. Check whether the new name is already used
+    if "name" in updated_subject_data:
+        existing_name = db.query(Subject).filter(
+            Subject.name == updated_subject_data["name"],
+            Subject.id != subject_id
+        ).first()
+
+        if existing_name:
+            raise HTTPException(409, detail="Subject name already exists")
+
+    # 5. Check whether the new code is already used
+    if "code" in updated_subject_data:
+        existing_code = db.query(Subject).filter(
+            Subject.code == updated_subject_data["code"],
+            Subject.id != subject_id
+        ).first()
+
+        if existing_code:
+            raise HTTPException(409, detail="Subject code already exists")
+
+    for key,val in updated_subject_data.items():
+        setattr(existing_subject,key,val)
+
+    db.add(existing_subject)
+    db.commit()
+    db.refresh(existing_subject)
+
+    return existing_subject
+
+def delete_subject(subject_id:int,db:Session):
+
+    existing_subject = db.query(Subject).filter(
+        Subject.id == subject_id
+    ).first()
+
+    if not existing_subject:
+        raise HTTPException(404, detail=f"Subject with id {subject_id} not found")
+
+    existing_assignment = db.query(TeachingAssignment).filter(
+        TeachingAssignment.subject_id == subject_id
+    ).first()
+
+    if existing_assignment:
+        raise HTTPException(409, detail="Subject is assigned cannot delete")
+
+    db.delete(existing_subject)
     db.commit()
 
     return None

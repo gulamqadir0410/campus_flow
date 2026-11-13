@@ -2,7 +2,8 @@ from fastapi import APIRouter
 from src.academics import controller
 from src.utils.db import get_db
 from src.academics.schemas import AcademicSessionCreate, AcademicSessionResponse, AcademicSessionUpdate, \
-    ClassLevelCreate, ClassLevelResponse, ClassLevelUpdate, SchoolClassCreate,SchoolClassUpdate,SchoolClassResponse
+    ClassLevelCreate, ClassLevelResponse, ClassLevelUpdate, SchoolClassCreate, SchoolClassUpdate, SchoolClassResponse, \
+    SubjectResponse, SubjectCreate, SubjectUpdate
 from sqlalchemy.orm import Session
 from fastapi import Depends,status
 
@@ -72,3 +73,25 @@ def update_school_class(school_class_id:int, body:SchoolClassUpdate, db:Session=
 @academics_routes.delete("/school-classes/{school_class_id}",status_code=status.HTTP_204_NO_CONTENT)
 def delete_school_class(school_class_id:int, db:Session=Depends(get_db)):
     return controller.delete_school_class(school_class_id, db)
+
+# Subject Routes
+
+@academics_routes.post("/subjects",response_model=SubjectResponse,status_code=status.HTTP_201_CREATED)
+def create_subject(body:SubjectCreate, db:Session = Depends(get_db)):
+    return controller.create_subject(body, db)
+
+@academics_routes.get("/subjects", response_model= list[SubjectResponse], status_code=status.HTTP_200_OK)
+def get_all_subjects(db:Session = Depends(get_db)):
+    return controller.get_all_subjects(db)
+
+@academics_routes.get("/subjects/{subject_id}", response_model= SubjectResponse, status_code=status.HTTP_200_OK)
+def get_subject_by_id(subject_id:int, db:Session = Depends(get_db)):
+    return controller.get_subject_by_id(subject_id,db)
+
+@academics_routes.patch("/subjects/{subject_id}",response_model=SubjectResponse, status_code=status.HTTP_200_OK)
+def update_subject_by_id(body:SubjectUpdate,subject_id:int, db:Session = Depends(get_db)):
+    return controller.update_subject_by_id(body,subject_id,db)
+
+@academics_routes.delete("/subjects/{subject_id}",status_code=status.HTTP_204_NO_CONTENT)
+def delete_subject(subject_id:int,db:Session = Depends(get_db)):
+    return controller.delete_subject(subject_id, db)
